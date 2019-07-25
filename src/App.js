@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Link } from 'react-router-dom';
 import { PrivateRoute, PublicRouter } from './helpers';
 import { Dashboard, Home }  from './components';
 import Login from './components/Login';
+import Users from './components/Users';
+import Comments from './components/Comments';
+import Products from './components/Products';
 
 function App() {
   return (
@@ -14,9 +17,6 @@ function App() {
               <Link to='/'>Home</Link>
             </li>
             <li class="list-group-item">
-              <Link to='/login'>Login</Link>
-            </li>
-            <li class="list-group-item">
               <Link to='/dashboard'>Dashboard</Link>
             </li>
           </ul>
@@ -24,6 +24,9 @@ function App() {
           <PublicRouter exact={true} path={'/'} component={Home}/>
           <PublicRouter path={'/login'} component={Login}/>
           <PrivateRoute path={'/dashboard'} component={Dashboard}/>
+          <PrivateRoute path={'/dashboard/users'} component={Users}/>
+          <PrivateRoute path={'/dashboard/products'} component={Products}/>
+          <PrivateRoute path={'/dashboard/comments'} component={Comments}/>
         </div>
       </Router>
     </>

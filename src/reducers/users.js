@@ -30,6 +30,9 @@ export default function userReducer(state = initState, action) {
                 messageError: action.payload.message
             };
         
+        case 'CLEAR_STATE_USER': 
+            return {};
+        
         default:
             return state;
     }
