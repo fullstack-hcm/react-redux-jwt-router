@@ -1,6 +1,8 @@
 const initState = {
     username: '',
-    token: ''
+    token: '',
+    submittingLogin: false,
+    messageError: null
 }
 /**
  * 
@@ -14,6 +16,20 @@ export default function userReducer(state = initState, action) {
                 username: action.payload.username,
                 token: action.payload.token,
             };
+            
+        case 'USER_REQUEST_LOGIN':
+            return {
+                ...state,
+                submittingLogin: true
+            };
+        
+        case 'USER_LOGIN_ERROR':
+            return {
+                ...state,
+                submittingLogin: false,
+                messageError: action.payload.message
+            };
+        
         default:
             return state;
     }

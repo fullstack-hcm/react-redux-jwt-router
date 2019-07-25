@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 import { PrivateRoute, PublicRouter } from './helpers';
-import { Login, Dashboard, Home }  from './components';
+import { Dashboard, Home }  from './components';
+import Login from './components/Login';
 
 function App() {
   return (
@@ -20,7 +21,6 @@ function App() {
             </li>
           </ul>
 
-          ------COMPOENNT-----
           <PublicRouter exact={true} path={'/'} component={Home}/>
           <PublicRouter path={'/login'} component={Login}/>
           <PrivateRoute path={'/dashboard'} component={Dashboard}/>
