@@ -42,6 +42,12 @@ export const addProduct = (title, description, price, image) => {
         }
     }
     Axios.post(URI, formData, config)
-        .then(resp => console.log({ resp: resp.data }))
+        .then(resp => {
+            let respt = resp.data;
+            return STORE.dispatch({
+                type: 'ADD_PRODUCT',
+                payload: respt.data
+            });
+        })
         .catch(err => console.log({ err }));
 }

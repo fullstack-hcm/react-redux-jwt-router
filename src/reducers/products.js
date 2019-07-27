@@ -13,7 +13,12 @@ export default function userReducer(state = initState, action) {
                 ...state,
                 listProducts: action.payload
             };
-            
+        case 'ADD_PRODUCT': {
+            return {
+                ...state,
+                listProducts: [...state.listProducts, action.payload]
+            }
+        }
         default:
             return state;
     }
