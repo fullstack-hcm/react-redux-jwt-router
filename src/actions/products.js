@@ -51,3 +51,100 @@ export const addProduct = (title, description, price, image) => {
         })
         .catch(err => console.log({ err }));
 }
+
+export const removeProduct = productID => {
+
+    STORE.dispatch({
+        type: 'REQUESTING_REMOVE',
+        payload: null
+    })
+
+    const URI = `${URI_FETCH}/product/${productID}`;
+
+    Axios.delete(URI)
+        .then(resp => {
+            const respt = resp.data;
+            const { data: { _id: productID } } = respt;
+            STORE.dispatch({
+                type: 'REMOVE_PRODUCT',
+                payload: {
+                    productID
+                }
+            });
+
+            STORE.dispatch({
+                type: 'REMOVE_DONE',
+                payload: null
+            })
+        }).catch(err => 
+        {
+            STORE.dispatch({
+                type: 'REMOVE_DONE',
+                payload: null
+            });
+            console.log({ err: err.message })
+        });
+}
+
+export const getInfoProduct = productID => {
+    STORE.dispatch({
+        type: 'REQUESTING_GET_INFO_PRODUCT',
+        payload: null
+    })
+    const URI = `${URI_FETCH}/product/${productID}`;
+    Axios.get(URI)
+        .then(resp => {
+            const respt = resp.data;
+            const { data: product } = respt;
+            STORE.dispatch({
+                type: 'GET_INFO_PRODUCT',
+                payload: {
+                    product
+                }
+            });
+
+            STORE.dispatch({
+                type: 'GET_INFO_PRODUCT_DONE',
+                payload: null
+            })
+        }).catch(err => 
+        {
+            STORE.dispatch({
+                type: 'GET_INFO_PRODUCT_DONE',
+                payload: null
+            })
+            console.log({ err: err.message })
+        });
+}
+
+export const updateInfoProduct = (productID, title, description, price) => {
+    STORE.dispatch({
+        type: 'REQUESTING_UPDATE_INFO_PRODUCT',
+        payload: null
+    })
+
+    const URI = `${URI_FETCH}/product/${productID}`;
+
+    Axios.put(URI, { title, description, price })
+        .then(resp => {
+            const respt = resp.data;
+            const { data: productNew } = respt;
+            STORE.dispatch({
+                type: 'UPDATE_INFO_PRODUCT_NEW',
+                payload: {
+                    product: productNew
+                }
+            })
+
+            STORE.dispatch({
+                type: 'UPDATE_PRODUCT_DONE',
+                payload: null
+            })
+        })
+        .catch(err => {
+            STORE.dispatch({
+                type: 'UPDATE_PRODUCT_DONE',
+                payload: null
+            })
+        })
+}

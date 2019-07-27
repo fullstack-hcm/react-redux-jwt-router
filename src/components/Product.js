@@ -1,22 +1,28 @@
 import React, { Component } from 'react';
 import { addProduct } from '../actions/products';
-
+import { connect } from 'react-redux';
+import { updateInfoProduct } from '../actions/products';
 class Product extends Component {
   state = {
-    title: '', description: '', price: '', image: null
+    title: '', description: '', price: '', image: null,
+    isUpdate: false, productID: ''
   }
 
-  _handleChangeText = e => this.setState({
-    [e.target.name]: e.target.value
-  });
+  _handleChangeText = e => {
+    const { name, value } = e.target;
+    console.log({ name, value })
+    this.setState({
+      [e.target.name]: e.target.value
+    });
+  }
 
   _handleChangeFile = e => {
     return this.setState({
-      image: e.target.files[0]
+      image: e.target.files[0]  
     })
   }
 
-  _handleSubmit = e => {
+  _handleSubmitAdd = e => {
     e.preventDefault();
 
     const { title, description, price, image } = this.state;
@@ -24,8 +30,28 @@ class Product extends Component {
     addProduct(title, description, price, image);
   }
 
+  _handleSubmitUpdate = e => {
+    e.preventDefault();
+    const { title, description, price, productID } = this.state;
+    updateInfoProduct(productID, title, description, price);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const { productID } = prevState;
+    const { infoProductPrepareUpdate } = this.props.products;
+
+    if (infoProductPrepareUpdate && productID !== infoProductPrepareUpdate._id) {
+      const { title, description, price, _id } = infoProductPrepareUpdate;
+      this.setState({
+        title, description, price, isUpdate: true, productID: _id
+      });
+    }
+  }
+
   render() {
-    return (
+    const { title, description, price, isUpdate } = this.state;
+    let { updatingInfo } = this.props.products;
+    return (  
       <>
         <div className="bootstrap-iso">
             <div className="container-fluid">
@@ -37,6 +63,7 @@ class Product extends Component {
                         Title
                     </label>
                     <input className="form-control" name="title" type="text" 
+                      value={title}
                       onChange={e => this._handleChangeText(e)}
                     />
                     </div>
@@ -46,6 +73,7 @@ class Product extends Component {
                     </label>
                     <textarea className="form-control" cols={40} name="description" rows={10} defaultValue={""} 
                       onChange={e => this._handleChangeText(e)}
+                      value={description}
                     />
                     </div>
                     <div className="form-group ">
@@ -54,6 +82,7 @@ class Product extends Component {
                     </label>
                     <input className="form-control" name="price" type="text" 
                       onChange={e => this._handleChangeText(e)}
+                      value={price}
                     />
                     </div>
                     <div className="form-group ">
@@ -66,9 +95,14 @@ class Product extends Component {
                     </div>
                     <div className="form-group">
                     <div>
-                        <button className="btn btn-primary " name="submit" type="submit" onClick={e => this._handleSubmit(e)}>
-                        @Add
-                        </button>
+                        {!isUpdate ? 
+                          <button className="btn btn-primary " name="submit" type="submit" onClick={e => this._handleSubmitAdd(e)}>
+                            @Thêm
+                          </button>  : 
+                          <button className="btn btn-success " name="submit" type="submit" onClick={e => this._handleSubmitUpdate(e)}>
+                            {updatingInfo ? '...': '@Cập Nhật'}
+                          </button>
+                        }
                     </div>
                     </div>
                 </form>
@@ -81,4 +115,8 @@ class Product extends Component {
   }
 }
 
-export default Product;
+const mapStateToProps = state => ({
+  products: state.products
+});
+
+export default connect(mapStateToProps, null)(Product);

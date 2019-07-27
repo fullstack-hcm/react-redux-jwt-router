@@ -75,6 +75,55 @@ app.get('/products', async (req, res) => {
     res.json(listProducts);
 });
 
+app.delete('/product/:productID', async (req, res) => {
+    try {
+        const { productID } = req.params;
+        let infoProductHasBeenDeleted = await Product.findByIdAndRemove(productID);
+        if (!infoProductHasBeenDeleted) res.json({
+            error: true, message: 'cannot_remove_item'
+        });
+
+        setTimeout(() => {
+            res.json({ error: false, data: infoProductHasBeenDeleted });
+        }, 1500);
+    } catch (error) {
+        res.json({ error: true, message: error.message });
+    }
+});
+
+app.get('/product/:productID', async (req, res) => {
+    try {
+        const { productID } = req.params;
+        let infoProduct = await Product.findById(productID);
+        if (!infoProduct) res.json({
+            error: true, message: 'cannot_get_item'
+        });
+
+        setTimeout(() => {
+            res.json({ error: false, data: infoProduct });
+        }, 1500);
+    } catch (error) {
+        res.json({ error: true, message: error.message });
+    }
+});
+
+app.put('/product/:productID', async (req, res) => {
+    const { productID } = req.params;
+    const { title, description, price } = req.body;
+
+    let infoAfterUpdate = await Product.findByIdAndUpdate(productID, {
+        title, description, price
+    }, { new: true });
+
+    if (!infoAfterUpdate) res.json({
+        error: true, message: 'cannot_update'
+    });
+
+    setTimeout(() => {
+        res.json({ error: false, data: infoAfterUpdate });
+    }, 1500);
+})
+
 const uri      = 'mongodb://localhost:27017/project_final';
 mongoose.connect(uri);
 mongoose.connection.once('open', () => {
