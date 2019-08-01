@@ -57,7 +57,6 @@ app.post('/products', UPLOAD_CONFIG.single('image'), async (req, res) => {
     const { title, description, price } = JSON.parse(req.body.data);
     const { originalname } = req.file;
 
-    // return console.log({ image });
     let initInfoProduct = new Product({ title, description, price, image: originalname });
     let infoProductAfterInserted = await initInfoProduct.save();
 
@@ -107,14 +106,20 @@ app.get('/product/:productID', async (req, res) => {
     }
 });
 
-app.put('/product/:productID', async (req, res) => {
+app.put('/product/:productID', UPLOAD_CONFIG.single('image'), async (req, res) => {
     const { productID } = req.params;
-    const { title, description, price } = req.body;
+    const { title, description, price } = JSON.parse(req.body.data);
+    const objUpdate = {};
 
-    let infoAfterUpdate = await Product.findByIdAndUpdate(productID, {
-        title, description, price
-    }, { new: true });
+    objUpdate.title = title;
+    objUpdate.description = description;
+    objUpdate.price = price;
 
+    if (req.file) {
+        const { originalname } = req.file;
+        objUpdate.image = originalname;
+    }
+    let infoAfterUpdate = await Product.findByIdAndUpdate(productID, objUpdate, { new: true });
     if (!infoAfterUpdate) res.json({
         error: true, message: 'cannot_update'
     });
@@ -124,9 +129,11 @@ app.put('/product/:productID', async (req, res) => {
     }, 1500);
 })
 
-const uri      = 'mongodb://localhost:27017/project_final';
+// const uri      = 'mongodb://localhost:27017/project_final';
+const uri = `mongodb://abc:abc123@ds157857.mlab.com:57857/final_mern_stack_0106`;
+const PORT = process.env.PORT || 5000;
 mongoose.connect(uri);
 mongoose.connection.once('open', () => {
     console.log(`mongo client connected`)
-    app.listen(5000, () => console.log(`server started at port 5000`));
-});
+    app.listen(PORT, () => console.log(`server started at port ${PORT}`));
+}); 
