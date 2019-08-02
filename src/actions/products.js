@@ -56,7 +56,9 @@ export const removeProduct = productID => {
 
     STORE.dispatch({
         type: 'REQUESTING_REMOVE',
-        payload: null
+        payload: {
+            productID
+        }
     })
 
     const URI = `${URI_FETCH}/product/${productID}`;
@@ -89,7 +91,9 @@ export const removeProduct = productID => {
 export const getInfoProduct = productID => {
     STORE.dispatch({
         type: 'REQUESTING_GET_INFO_PRODUCT',
-        payload: null
+        payload: {
+            productID
+        }
     })
     const URI = `${URI_FETCH}/product/${productID}`;
     Axios.get(URI)
@@ -117,15 +121,34 @@ export const getInfoProduct = productID => {
         });
 }
 
-export const updateInfoProduct = (productID, title, description, price) => {
+export const updateInfoProduct = (productID, title, description, price, image) => {
     STORE.dispatch({
         type: 'REQUESTING_UPDATE_INFO_PRODUCT',
         payload: null
     })
 
+    const formData = new FormData();
+    
+    /**
+     * ĐÍNH KÈM HÌNH ẢNH TRONG REQUEST
+     */
+    formData.append('image', image);
+    /**
+     * ĐÍNH KÈM DỮ LIỆU
+     */
+    const data = JSON.stringify({ title, description, price });
+    formData.append('data', data);
+
+
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+    }
+
     const URI = `${URI_FETCH}/product/${productID}`;
 
-    Axios.put(URI, { title, description, price })
+    Axios.put(URI, formData, config)
         .then(resp => {
             const respt = resp.data;
             const { data: productNew } = respt;

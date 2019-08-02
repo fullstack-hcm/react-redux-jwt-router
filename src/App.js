@@ -1,8 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 import { PrivateRoute, PublicRouter } from './helpers';
-import { Dashboard, Home }  from './components';
+import { Dashboard,  }  from './components';
 import Login from './components/Login';
+import Home from './components/Home';
 import Users from './components/Users';
 import Comments from './components/Comments';
 import Products from './components/Products';

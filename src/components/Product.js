@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import { addProduct } from '../actions/products';
 import { connect } from 'react-redux';
 import { updateInfoProduct } from '../actions/products';
+import { URI_FETCH } from '../constants';
+
 class Product extends Component {
   state = {
     title: '', description: '', price: '', image: null,
-    isUpdate: false, productID: ''
+    isUpdate: false, productID: '', nameImage: ''
   }
 
   _handleChangeText = e => {
@@ -32,8 +34,8 @@ class Product extends Component {
 
   _handleSubmitUpdate = e => {
     e.preventDefault();
-    const { title, description, price, productID } = this.state;
-    updateInfoProduct(productID, title, description, price);
+    const { title, description, price, productID, image } = this.state;
+    updateInfoProduct(productID, title, description, price, image);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -41,15 +43,16 @@ class Product extends Component {
     const { infoProductPrepareUpdate } = this.props.products;
 
     if (infoProductPrepareUpdate && productID !== infoProductPrepareUpdate._id) {
-      const { title, description, price, _id } = infoProductPrepareUpdate;
+      const { title, description, price, _id, image } = infoProductPrepareUpdate;
       this.setState({
-        title, description, price, isUpdate: true, productID: _id
+        title, description, price, isUpdate: true, productID: _id,
+        nameImage: image
       });
     }
   }
 
   render() {
-    const { title, description, price, isUpdate } = this.state;
+    const { title, description, price, isUpdate, nameImage } = this.state;
     let { updatingInfo } = this.props.products;
     return (  
       <>
@@ -86,12 +89,26 @@ class Product extends Component {
                     />
                     </div>
                     <div className="form-group ">
-                    <label className="control-label " htmlFor="name1">
-                        Image
-                    </label>
-                    <input className="form-control" id="name1" name="image" type="file" 
-                      onChange={e => this._handleChangeFile(e)}
-                    />
+                      <div className="row">
+                        <div className="col-md-6">
+                            <label className="control-label " htmlFor="name1">
+                              Image
+                          </label>
+                          <input className="form-control" id="name1" name="image" type="file" 
+                            onChange={e => this._handleChangeFile(e)}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <img 
+                            src={!isUpdate ? "https://via.placeholder.com/200" : 
+                              (nameImage.length > 0  ? `${URI_FETCH}/upload/${nameImage}` : "https://via.placeholder.com/200")
+                            }
+                            alt=""
+                            width={200}
+                            height={200}
+                          />
+                        </div>
+                      </div>
                     </div>
                     <div className="form-group">
                     <div>

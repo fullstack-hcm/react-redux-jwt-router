@@ -1,8 +1,8 @@
 const initState = {
     listProducts: [],
-    requestingRemove: false,
     infoProductPrepareUpdate: undefined,
-    requestingGetInfo: false,
+    requestingGetInfo: '', //_id of item(product)
+    requestingRemove: '',
     updatingInfo: false,
 }
 /**
@@ -28,7 +28,7 @@ export default function productReducer(state = initState, action) {
         case 'REQUESTING_REMOVE': 
             return {
                 ...state,
-                requestingRemove: true
+                requestingRemove: action.payload.productID
             }
 
         case 'REMOVE_PRODUCT': 
@@ -40,7 +40,7 @@ export default function productReducer(state = initState, action) {
         case 'REMOVE_DONE': 
             return {
                 ...state,
-                requestingRemove: false 
+                requestingRemove: '' 
             }
         
         case 'GET_INFO_PRODUCT':
@@ -52,31 +52,44 @@ export default function productReducer(state = initState, action) {
         case 'REQUESTING_GET_INFO_PRODUCT':
             return {
                 ...state,
-                requestingGetInfo: true
+                requestingGetInfo: action.payload.productID
             }
 
         case 'GET_INFO_PRODUCT_DONE':
             return {
                 ...state,
-                requestingGetInfo: false
+                requestingGetInfo: ''
             }
 
         case 'UPDATE_INFO_PRODUCT_NEW': 
         {
+            // let { _id: productIdUpdateNew, title, description, price } = action.payload.product;
+            // /**
+            //  * ITEM FINDED IN STATE(STORE)
+            //  */
+            // let infoItemInState = state.listProducts.find(product => Object.is(product._id, productIdUpdateNew));
+            // let infoItemNew     = {
+            //     ...infoItemInState, 
+            //     title, description, price
+            // };
+            // let indexItem = state.listProducts.findIndex(product => Object.is(product._id, productIdUpdateNew));
+            // state.listProducts.splice(indexItem, 1)
+            // return {
+            //     ...state,
+            //     listProducts: [...state.listProducts, infoItemNew]
+            // }
+
             let { _id: productIdUpdateNew, title, description, price } = action.payload.product;
-            /**
-             * ITEM FINDED IN STATE(STORE)
-             */
-            let infoItemInState = state.listProducts.find(product => Object.is(product._id, productIdUpdateNew));
-            let infoItemNew     = {
-                ...infoItemInState, 
-                title, description, price
-            };
-            let indexItem = state.listProducts.findIndex(product => Object.is(product._id, productIdUpdateNew));
-            state.listProducts.splice(indexItem, 1)
+
+            let newArr = state.listProducts.map(product => {
+                if (product._id !== productIdUpdateNew) return product;
+                return {
+                    ...product,
+                    title, description, price
+                }
+            });
             return {
-                ...state,
-                listProducts: [...state.listProducts, infoItemNew]
+                ...state, listProducts: newArr
             }
         }  
 

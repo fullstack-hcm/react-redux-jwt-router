@@ -2,7 +2,6 @@ import axios from 'axios';
 import { URI_FETCH } from '../constants';
 import STORE from '../stores';
 import Axios from 'axios';
-
 export const loginRequest = ({ username, password, history }) => {
     console.log({ username, password })
     return dispatch => {
@@ -50,7 +49,6 @@ export const refreshApp = () => {
             type: 'CLEAR_STATE_USER',
             payload: null
         });
-    
     Axios.get(`${URI_FETCH}/refresh-token/${token}`)
         .then(resp => {
             let respt = resp.data;
@@ -63,4 +61,13 @@ export const refreshApp = () => {
             });
         })
         .catch(err => console.log({ err: err.message }));
+}
+
+export const logout = (history) => {
+    localStorage.removeItem('token');
+    STORE.dispatch({
+        type: 'CLEAR_STATE_USER',
+        payload: null
+    });
+    return history.push('/');
 }
